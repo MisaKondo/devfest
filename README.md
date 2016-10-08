@@ -102,7 +102,7 @@ default-allow-ssh                   default        0.0.0.0/0     tcp:22
 # ここまでの注意点
 
 - subnetはregion単位（zoneはまたげるが、regionはまたげない)
-- Legacyでも同じだが、firewall ruleを指定することによって通信が可能となっている（逆に言うと、何もruleが作られてないないとsshとかできない）
+- Legacyでも同じだが、firewall ruleを指定することによって通信が可能となっている（逆に言うと、何もruleが作られてないとsshとかできない）
 
 ---
 
@@ -117,13 +117,13 @@ default-allow-ssh                   default        0.0.0.0/0     tcp:22
 ```
 # US
 gcloud compute instances create default-us --image-family centos-6 --image-project centos-cloud \
---machine-type n1-standard- 1 --zone us-central1-f --subnet default --description 'Sample of Dev Fest' \
+--machine-type n1-standard-1 --zone us-central1-f --subnet default --description 'Sample of Dev Fest' \
 --boot-disk-device-name default-us --boot-disk-size 10GB --boot-disk-type pd-ssd --tags default --preemptible
 
 # ASIA
 gcloud compute instances create default-asia --image-family centos-6 --image-project centos-cloud \
 --machine-type n1-standard-1 --zone asia-east1-c --subnet default --description 'Sample of Dev Fest' \
---boot-disk-device-name default-asia --boot-disk-size 10GB --boot-disk-type pd-ssd --tags default ---preemptible
+--boot-disk-device-name default-asia --boot-disk-size 10GB --boot-disk-type pd-ssd --tags default --preemptible
 ```
 
 ---
@@ -158,7 +158,7 @@ gcloud compute networks create subnetnetwork --mode custom --description GlobalO
 
 ```
 gcloud compute networks subnets create devfest-us-central --description DevFestUSNetwork --network subnetnetwork --region us-central1 --range 10.10.0.0/16
-gcloud compute networks subnets create devfest-asia-east --description DevFestASIANetwork--network subnetnetwork --region asia-east1 --range 10.11.0.0/16
+gcloud compute networks subnets create devfest-asia-east --description DevFestASIANetwork --network subnetnetwork --region asia-east1 --range 10.11.0.0/16
 ```
 
 ---
@@ -169,9 +169,11 @@ gcloud compute networks subnets create devfest-asia-east --description DevFestAS
 gcloud compute firewall-rules create all-allow-icmp-service \
 --allow icmp --description icmp --network subnetnetwork --target-tags icmp --source-ranges 0.0.0.0/0
 gcloud compute firewall-rules create devfest-internal-allow-tcp-service \
---allow tcp:1-65535 --description internal-tcp --network subnetnetwork --target-tags devfest-resource  --source-tags devfest-resource
+--allow tcp:1-65535 --description internal-tcp --network subnetnetwork \
+--target-tags devfest-resource --source-tags devfest-resource \
 gcloud compute firewall-rules create devfest-internal-allow-udp-service \
---allow udp:1-65535 --description internal-udp --network subnetnetwork --target-tags devfest-resource  --source-tags devfest-resource
+--allow udp:1-65535 --description internal-udp --network subnetnetwork \
+--target-tags devfest-resource  --source-tags devfest-resource
 ```
 
 ---
